@@ -1,0 +1,82 @@
+ANY_CHAR:
+ "\0x0000".."\0xFFFF"
+
+ALPHA:
+ "a".."z"
+ "A".."Z"
+ 
+DIGIT:
+ "0".."9"
+
+WHITESPACE:
+ " " | "\t"  { " " | "\t" }
+
+OPTWHITESPACE:
+ [ WHITESPACE ]
+
+NEWLINE:
+ "\r" | "\n"  { " " | "\t" | "\r" | "\n" }
+
+OPTNEWLINE:
+ [ NEWLINE ]
+
+ENDLINE:
+ OPTWHITESPACE NEWLINE
+
+OPTLINEEND:
+ OPTWHITESPACE OPTNEWLINE
+
+SEPARATOR:
+ ENDLINE
+ WHITESPACE 
+
+OPTSEPARATOR:
+ { " " | "\t" | "\r" | "\n" }
+
+SAFE:
+ "$" | "-" | "_" | "@" | "." | "&" | ":"
+ 
+EXTRA:
+ "!" | "*" | "'" | "|" | "," | "(" | ")" | "/"
+
+ESCAPE:
+ "%" HEX HEX
+
+
+ESCAPEDECODE:
+ ESCAPE { ESCAPE } 
+ 
+HEX:
+ DIGIT
+ "a".."f"
+ "A".."F"
+ 
+XALPHA:
+ ALPHA | DIGIT | SAFE | EXTRA | ESCAPE 
+
+XALPHADECODE:
+ ALPHA | DIGIT | SAFE | EXTRA | ESCAPEDECODE 
+
+URI:
+ XALPHA { XALPHA }
+
+RESERVED:
+ "body"
+ "filler"
+ "row"
+ "col"
+ "text"
+ "html"
+ "script"
+
+FAST:
+ "{:" URI  -> ""
+ "{" RESERVED  ( ENDLINE | WHITESPACE | "}" ) -> ""
+ "{" URI   -> "\"" URI "\"," 
+ ANY_CHAR -> ""
+
+BLOCK:
+  { FAST } 
+ 
+PROGRAM:
+ BLOCK -> "[" BLOCK "]"

@@ -1,0 +1,4 @@
+
+  var doc = "<html><head><link rel='stylesheet' type='text/css' href='uil.css'/><script src='uil.js'></script></head><body onLoad='doTraverse()'><div class='body' style=''><div class='col' style=''><div class='filler' style=''></div><div class='row' style=''><div class='filler' style=''></div><div class='text' style=''>norwegian wood            </div><div class='filler' style='min-width:300px;background:red;'></div><div class='text' style=''>swedish sausage            </div><div class='filler' style=''></div></div><div class='filler' style=''></div><div class='text' style=''>danish        </div><div class='filler' style=''></div></div></div></body></html>";
+  //window.open('','name','height=1000,width=1000').document.write(doc);
+doc;

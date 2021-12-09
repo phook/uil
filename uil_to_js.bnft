@@ -65,13 +65,17 @@ TEXT_CHAR:
  
 BLOCK_INSIDE:
  BLOCK
- { TEXT_CHAR }
+ { TEXT_CHAR } -> "target._in_text(\"" TEXT_CHAR "\");\n"
+
+VALUE:
+ URI
+
+PARAMETERS:
+ URI OPTWHITESPACE "=" VALUE -> "\"" URI "\":\"" VALUE "\","
 
 BLOCK:
- "{" URI OPTWHITESPACE "}" OPTLINEEND                             -> "<div class='" URI "'></div>"
- "{" URI OPTLINEEND { OPTWHITESPACE BLOCK_INSIDE } "}" OPTLINEEND -> "<div class='" URI "'>" BLOCK_INSIDE "</div>"
+ "{" URI { WHITESPACE PARAMETERS } OPTWHITESPACE "}" OPTLINEEND                             -> "target._in_class_begin(\"" URI "\",{" PARAMETERS "});\ntarget._in_class_end();\n"
+ "{" URI { WHITESPACE PARAMETERS } OPTLINEEND { OPTWHITESPACE BLOCK_INSIDE } "}" OPTLINEEND -> "target._in_class_begin(\"" URI "\",{" PARAMETERS "});\n" BLOCK_INSIDE "target._in_class_end();\n"
 
 PROGRAM:
- BLOCK-> "
-  var doc = \"<html><head><link rel='stylesheet' type='text/css' href='uil.css'/><script src='uil.js'></script></head><body onLoad='doTraverse()'>" BLOCK "</body></html>\";
-  //window.open('','name','height=1000,width=1000').document.write(doc);\ndoc;"
+ BLOCK -> "target._in_begin();\n" BLOCK "target._in_end();\n"

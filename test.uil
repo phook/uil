@@ -1,0 +1,38 @@
+{body
+    {script src=../public/ace/src-min-noconflict/ace.js type=text/javascript charset=utf-8}
+    {:menu
+        {row
+            {icon icon=menu}
+            {row
+            }
+            {filler background=:color height=:bsize}            
+        }
+    }
+    {col
+        {filler}
+        {row
+            {filler}
+            {framed
+                {text
+                  norwegian wood
+                }
+            }
+            {filler background=red}
+            {editor min-width=300px
+              swedish sausage
+
+            }
+            {script
+               var editElement = document.getElementById("editor");
+               editElement.style.flex=1;
+               var editor = ace.edit(editElement);
+            }
+            {filler}
+        }
+        {filler}
+        {text max-width=900000
+          danish
+        }
+        {filler}
+    }
+}

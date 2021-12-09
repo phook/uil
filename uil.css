@@ -1,4 +1,4 @@
-p {
+html, body, p, div {
     align-content:unset;
     align-items:unset;
     align-self:unset;
@@ -45,7 +45,7 @@ p {
     counter-increment:unset;
     counter-reset:unset;
     cursor:unset;
-    display:unset;
+    display: flex;
     dominant-baseline:unset;
     empty-cells:unset;
     fill-opacity:unset;
@@ -195,32 +195,105 @@ p {
     writing-mode:unset;
     z-index:unset;
 }
+.measurement
+{
+    position: absolute;
+    visibility: hidden;
+    height: auto;
+    width: auto;
+    white-space: nowrap; 
+}
+html {
+    height:100%;
+}
+
+body {
+    width: 100%;
+    height:100%;
+    flex-direction: column;
+    display: flex;
+}
 div {
-    /*
+    /* for debugguing
     border-style: solid;
     border-width: 1px;
     */
+    display: flex;
 }
 .body {
-	height: 100%;
-	flex-direction: column;
-	display: flex;
+    width: 100%;
+    flex-direction: column;
+    display: flex;
+    flex: 1 1 auto;
+    overflow: overlay;
 }
 .filler {
 	display: flex;
 	flex-grow: 1;
-}
-.row {
-	display: flex;
-	flex-direction: row;
-    /* flex-grow should be set if flexible in column direction based on children properties */
+    flex: 1 1 auto;
+    pointer-events: none; // fillers should not be clickable
 }
 .col {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+    flex: 1 1 auto;
+    pointer-events: none; // layers should not be clickable - but it should enable on kids
     /* flex-grow should be set if flexible in row direction based on children properties */
-	flex-grow: 1;
+}
+.row {
+	display: flex;
+	flex-direction: column;
+    flex: 1 1 auto;
+    pointer-events: none; // layers should not be clickable - but it should enable on kids
+    /* flex-grow should be set if flexible in column direction based on children properties */
+}
+.layers {
+    display: flex; 
+	position: relative;
+	height:100%;
+	width:100%;
+	flex: 1 1 auto;
+    pointer-events: none; // layers should not be clickable - but it should enable on kids
+   /* flex-grow should be set if flexible in column direction based on children properties */
 }
 .text {
-    display:block;
+    display: flex;
+    height: auto;
+    width: auto;
+    white-space: nowrap;
+}
+.template {
+    height: auto;
+    width: auto;
+    white-space: nowrap;
+    display: none;
+    flex: 1 1 auto;
+}
+
+.anim-fadein {
+  animation:fadein linear  0.2s forwards;
+  
+}
+
+.anim-fadeout {
+  animation:fadeout linear 0.2s  forwards;
+}
+
+
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+   opacity: 0;
+  }
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+   opacity: 1;
+  }
 }

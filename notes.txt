@@ -1,0 +1,66 @@
+
+
+
+FOR UIL:
+
+
+inside row and col disable flex-grow, when no elastic children in opposite dimension exist
+
+
+
+
+utility functions for the objects (external - call with them as this)
+
+test for elasticity vertical or horisontal (min != max) (elastic sets flex-grow)
+
+test for child elasticty - if any it becomes elastic unless min and max has been set to the same
+
+
+
+
+
+
+templates:
+
+{load src="flavors/uil_basic.uil}   // loads the uil_basic file and parses it - it will include all the defined templates
+
+{template name="center" var1="default"
+    {html
+     <foo/>
+    }
+    {script
+        var a=%var1%;
+    }
+    {col
+        {filler height="%var1%"}  // vars can be accessed with % sign
+        {row
+            {filler}
+            %content%   // %content% is the placeholder var for insides of template
+            {filler}
+       }
+       {filler}
+    }
+}
+
+i.e.
+
+{center
+    this text is centered
+}
+
+
+
+
+
+var orgVar = window.document.body.style; Object.defineProperty(window.document.body.style, "backgroundColor", {
+	get: function() { 
+         return window.document.body.style["background-color"]; 
+    },
+	set: function(newColor) {
+		window.document.body.style["background-color"] = newColor; alert("test");
+	},
+});
+
+Adding a setter/listener for existing style vars - the setter is added for the javascript var and applied to the css var (not all can be used though)
+Templates can define their vars and have setters added to them.
+

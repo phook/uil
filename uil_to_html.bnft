@@ -1,0 +1,119 @@
+ANY_CHAR:
+ "\0x0000".."\0xFFFF"
+
+ALPHA:
+ "a".."z"
+ "A".."Z"
+ 
+DIGIT:
+ "0".."9"
+
+OPTWHITESPACE:
+ { " " | "\t" }
+
+WHITESPACE:
+ " " | "\t"  OPTWHITESPACE
+
+OPTNEWLINE:
+ { " " | "\t" | "\r" | "\n" }
+
+NEWLINE:
+ "\r" | "\n" OPTNEWLINE
+
+
+ENDLINE:
+ OPTWHITESPACE NEWLINE
+
+OPTLINEEND:
+ OPTWHITESPACE OPTNEWLINE
+
+SEPARATOR:
+ ENDLINE
+ WHITESPACE 
+
+OPTSEPARATOR:
+ { " " | "\t" | "\r" | "\n" }
+
+SAFE:
+ "$" | "-" | "_" | "@" | "." | "&" | ":"
+ 
+EXTRA:
+ "!" | "*" | "'" | "|" | "," | "(" | ")" | "/" | "?"
+
+ESCAPE:
+ "%" HEX HEX
+
+ESCAPEDECODE:
+ ESCAPE { ESCAPE } 
+ 
+HEX:
+ DIGIT
+ "a".."f"
+ "A".."F"
+ 
+XALPHA:
+ ALPHA | DIGIT | SAFE | EXTRA | ESCAPE 
+
+URI:
+ XALPHA { XALPHA }
+
+DECODED_URI:
+ URI ->  #decodeuri URI
+
+VALUE:
+ DECODED_URI
+
+TEXT_CHAR:
+ " "
+ XALPHA
+ NEWLINE -> ""
+ 
+STRING:
+ "\"" "\"" -> ""
+ "\"" { ANY_CHAR } "\"" -> ANY_CHAR
+ 
+PARAMETER:
+ URI OPTWHITESPACE "=" OPTWHITESPACE STRING  -> "\"" URI "\":\"" STRING "\""
+ URI OPTWHITESPACE "=" OPTWHITESPACE VALUE  -> "\"" URI "\":\"" VALUE "\""
+
+NEXT_PARAMETER:
+ PARAMETER -> "," PARAMETER
+
+PARAMETERSECTION:
+ WHITESPACE PARAMETER { WHITESPACE NEXT_PARAMETER } -> " data-uilstyle='{" PARAMETER NEXT_PARAMETER"}'"
+
+SCRIPT_CHAR:
+ "{" SCRIPT_SECTION -> "{" SCRIPT_SECTION "}"
+ ANY_CHAR
+
+SCRIPT_SECTION:
+ { SCRIPT_CHAR } "}" -> SCRIPT_CHAR 
+
+SCRIPT_PARAMETER:
+ URI OPTWHITESPACE "=" OPTWHITESPACE STRING  -> URI "=\"" STRING "\""
+ URI OPTWHITESPACE "=" OPTWHITESPACE VALUE   -> URI "=\"" VALUE "\""
+
+SCRIPT_PARAMETERS:
+ { WHITESPACE SCRIPT_PARAMETER } 
+
+RESERVED:
+ "body"
+ "filler"
+ "row"
+ "col"
+
+LINE:
+ "{html" ENDLINE SCRIPT_SECTION        OPTSEPARATOR                                       ->  SCRIPT_SECTION 
+ "{script" SCRIPT_PARAMETERS OPTWHITESPACE "}"    OPTSEPARATOR                            -> "<script" SCRIPT_PARAMETERS "></script>"
+ "{script" SCRIPT_PARAMETERS  [ ENDLINE SCRIPT_SECTION ] OPTSEPARATOR                     -> "<script type='application/json'" SCRIPT_PARAMETERS ">" SCRIPT_SECTION "</script>"
+ "{:" URI      [ PARAMETERSECTION ]   ENDLINE BLOCK        "}" OPTSEPARATOR               -> "<div  class='template' id='" URI "'" PARAMETERSECTION ">" BLOCK "</div>"
+ "{" RESERVED  [ PARAMETERSECTION ] [ ENDLINE BLOCK ] OPTSEPARATOR "}" OPTSEPARATOR       -> "<div  uilElement='true' class='" RESERVED "' " PARAMETERSECTION ">" BLOCK "</div>"
+ "{text"       [ PARAMETERSECTION ] [ ENDLINE TEXT_CHAR ] OPTSEPARATOR "}" OPTSEPARATOR   -> "<span uilElement='true' class='" URI "' id='" URI "' " PARAMETERSECTION ">" TEXT_CHAR "</span>"
+ "{" URI       [ PARAMETERSECTION ] [ ENDLINE BLOCK ] OPTSEPARATOR "}"  OPTSEPARATOR      -> "<div  uilElement='true' class='" URI "' id='" URI "' " PARAMETERSECTION ">" BLOCK "</div>"
+
+BLOCK:
+ OPTWHITESPACE LINE { OPTWHITESPACE LINE }
+ { TEXT_CHAR }
+ 
+PROGRAM:
+ BLOCK-> "<!DOCTYPE html><html><head><link rel='stylesheet' type='text/css' href='/uil/uil.css'/><script src='/uil/uil.js'></script></head><body onLoad='doTraverse()'>" BLOCK "</body></html>"
