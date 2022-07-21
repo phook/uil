@@ -332,6 +332,60 @@ function DOMTraverse(parent)
 
 }
 
+// Sorts keys in "dawn" order - where matching starts of string results in the longer being on top
+function dawnSort(a,b)
+{ 
+    if (b.indexOf(a) == 0)
+    {
+        return 1;
+    }
+    if (a.indexOf(b) == 0)
+    {
+        return -1;
+    }
+    return a>b?1:-1;
+}
+
+function DOMLookup(_identifier, from_owner)
+{
+    if (_identifier == this.id)
+        return this;
+
+    var originalIdentifier = _identifier;
+
+    if (typeof(this.id) != "undefined")
+    {
+        if (this.id.charAt(-1) != "." && _identifier.indexOf(this.id) == 0)
+        {
+            if (_identifier.indexOf(this.id + ":") == 0)
+                _identifier = _identifier.substring(this.id.length+1);
+            else
+                _identifier = _identifier.substring(this.id.length);
+        }
+    
+    let result = DOMLookup_child.call(this, _identifier);
+    
+    if (result)
+        return result;
+    }
+    
+    if (this.parentNode && !from_owner)
+        return DOMLookup.call(this.parentNode, originalIdentifier);
+    
+    return null;
+}
+
+function DOMLookup_child(_identifier)
+{       
+    for (let i = 0; i < this.children.length; i++) 
+    {
+        var result = DOMLookup.call(this.children[i],_identifier,true);
+        if (result)
+            return result;
+    }
+    return null;
+}
+
 function rerunScripts()
 {
     let scripts = [].slice.call(this.getElementsByTagName("script"));
@@ -339,7 +393,8 @@ function rerunScripts()
     {
         let scriptElement = document.createElement('script');
         scriptElement.type = "text/javascript";
-        scriptElement.appendChild( document.createTextNode( scripts[j].innerText ) );
+        scriptSource = scripts[j].innerText.replace("/*","").replace(/(\*\/(?!.*\*\/))?/g,"");
+        scriptElement.appendChild( document.createTextNode( scriptSource ) );
         scripts[j].parentElement.replaceChild(scriptElement,scripts[j]); // force rerun
     }
 }

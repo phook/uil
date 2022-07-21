@@ -20,12 +20,11 @@ OPTNEWLINE:
 NEWLINE:
  "\r" | "\n" OPTNEWLINE
 
-
 ENDLINE:
  OPTWHITESPACE NEWLINE
 
-OPTLINEEND:
- OPTWHITESPACE OPTNEWLINE
+OPTENDLINE:
+ OPTNEWLINE
 
 SEPARATOR:
  ENDLINE
@@ -105,10 +104,10 @@ RESERVED:
 LINE:
  "{html" ENDLINE SCRIPT_SECTION        OPTSEPARATOR                                       ->  SCRIPT_SECTION 
  "{script" SCRIPT_PARAMETERS OPTWHITESPACE "}"    OPTSEPARATOR                            -> "<script" SCRIPT_PARAMETERS "></script>"
- "{script" SCRIPT_PARAMETERS  [ ENDLINE SCRIPT_SECTION ] OPTSEPARATOR                     -> "<script type='application/json'" SCRIPT_PARAMETERS ">" SCRIPT_SECTION "</script>"
+ "{script" SCRIPT_PARAMETERS  [ ENDLINE SCRIPT_SECTION ] OPTSEPARATOR                     -> "<script type='application/json'" SCRIPT_PARAMETERS ">/*" SCRIPT_SECTION "*/</script>"
  "{:" URI      [ PARAMETERSECTION ]   ENDLINE BLOCK        "}" OPTSEPARATOR               -> "<div  class='template' id='" URI "'" PARAMETERSECTION ">" BLOCK "</div>"
- "{" RESERVED  [ PARAMETERSECTION ] [ ENDLINE BLOCK ] OPTSEPARATOR "}" OPTSEPARATOR       -> "<div  uilElement='true' class='" RESERVED "' " PARAMETERSECTION ">" BLOCK "</div>"
  "{text"       [ PARAMETERSECTION ] [ ENDLINE TEXT_CHAR ] OPTSEPARATOR "}" OPTSEPARATOR   -> "<span uilElement='true' class='" URI "' id='" URI "' " PARAMETERSECTION ">" TEXT_CHAR "</span>"
+ "{" RESERVED  [ PARAMETERSECTION ] [ ENDLINE BLOCK ] OPTSEPARATOR "}" OPTSEPARATOR       -> "<div  uilElement='true' class='" RESERVED "' " PARAMETERSECTION ">" BLOCK "</div>"
  "{" URI       [ PARAMETERSECTION ] [ ENDLINE BLOCK ] OPTSEPARATOR "}"  OPTSEPARATOR      -> "<div  uilElement='true' class='" URI "' id='" URI "' " PARAMETERSECTION ">" BLOCK "</div>"
 
 BLOCK:
